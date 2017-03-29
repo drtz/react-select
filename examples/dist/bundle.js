@@ -40,6 +40,7 @@ var propTypes = {
 	loadingPlaceholder: _react2['default'].PropTypes.oneOfType([// replaces the placeholder while options are loading
 	_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
 	loadOptions: _react2['default'].PropTypes.func.isRequired, // callback to load options asynchronously; (inputValue: string, callback: Function): ?Promise
+	multi: _react2['default'].PropTypes.bool, // multi-value input
 	options: _react.PropTypes.array.isRequired, // array of options
 	placeholder: _react2['default'].PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
 	_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
@@ -265,7 +266,7 @@ function defaultChildren(props) {
 };
 module.exports = exports['default'];
 
-},{"./Select":"react-select","./utils/stripDiacritics":10,"react":undefined}],2:[function(require,module,exports){
+},{"./Select":"@ordermygear/react-select","./utils/stripDiacritics":10,"react":undefined}],2:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -323,7 +324,7 @@ var AsyncCreatable = _react2['default'].createClass({
 
 module.exports = AsyncCreatable;
 
-},{"./Select":"react-select","react":undefined}],3:[function(require,module,exports){
+},{"./Select":"@ordermygear/react-select","react":undefined}],3:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -641,7 +642,7 @@ function shouldKeyDownEventCreateNewOption(_ref6) {
 
 module.exports = Creatable;
 
-},{"./Select":"react-select","./utils/defaultFilterOptions":8,"./utils/defaultMenuRenderer":9,"react":undefined}],4:[function(require,module,exports){
+},{"./Select":"@ordermygear/react-select","./utils/defaultFilterOptions":8,"./utils/defaultMenuRenderer":9,"react":undefined}],4:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -1031,7 +1032,7 @@ module.exports = function stripDiacritics(str) {
 	return str;
 };
 
-},{}],"react-select":[function(require,module,exports){
+},{}],"@ordermygear/react-select":[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1137,6 +1138,7 @@ var Select = _react2['default'].createClass({
 		backspaceToRemoveMessage: _react2['default'].PropTypes.string, // Message to use for screenreaders to press backspace to remove the current item - {label} is replaced with the item label
 		className: _react2['default'].PropTypes.string, // className for the outer element
 		clearAllText: stringOrNode, // title for the "clear" control when multi: true
+		clearInputOnSelect: _react2['default'].PropTypes.bool, // Clears the input component when a selection is made (multi only)
 		clearRenderer: _react2['default'].PropTypes.func, // create clearable x element
 		clearValueText: stringOrNode, // title for the "clear" control
 		clearable: _react2['default'].PropTypes.bool, // should it be possible to reset value
@@ -1208,6 +1210,7 @@ var Select = _react2['default'].createClass({
 			backspaceToRemoveMessage: 'Press backspace to remove {label}',
 			clearable: true,
 			clearAllText: 'Clear all',
+			clearInputOnSelect: true,
 			clearRenderer: _utilsDefaultClearRenderer2['default'],
 			clearValueText: 'Clear value',
 			deleteRemoves: true,
@@ -1441,7 +1444,7 @@ var Select = _react2['default'].createClass({
 			});
 		} else {
 			// otherwise, focus the input and open the menu
-			this._openAfterFocus = true;
+			this._openAfterFocus = this.props.openOnFocus;
 			this.focus();
 		}
 	},
@@ -1721,10 +1724,11 @@ var Select = _react2['default'].createClass({
 		//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 		this.hasScrolledToOption = false;
 		if (this.props.multi) {
-			this.setState({
-				inputValue: '',
-				focusedIndex: null
-			}, function () {
+			var nextState = { focusedIndex: null };
+			if (!this.props.multi || this.props.clearInputOnSelect) {
+				nextState.inputValue = '';
+			}
+			this.setState(nextState, function () {
 				_this3.addValue(value);
 			});
 		} else {
@@ -2145,7 +2149,14 @@ var Select = _react2['default'].createClass({
 
 		var focusedOption = this.state.focusedOption || selectedOption;
 		if (focusedOption && !focusedOption.disabled) {
-			var focusedOptionIndex = options.indexOf(focusedOption);
+			var focusedOptionIndex = -1;
+			options.some(function (option, index) {
+				var isOptionEqual = option.value === focusedOption.value;
+				if (isOptionEqual) {
+					focusedOptionIndex = index;
+				}
+				return isOptionEqual;
+			});
 			if (focusedOptionIndex !== -1) {
 				return focusedOptionIndex;
 			}

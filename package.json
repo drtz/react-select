@@ -1,6 +1,6 @@
 {
-  "name": "react-select",
-  "version": "1.0.0-rc.3",
+  "name": "@ordermygear/react-select",
+  "version": "1.0.0-omg-rc.3",
   "description": "A Select control built with and for ReactJS",
   "main": "lib/Select.js",
   "style": "dist/react-select.min.css",
@@ -75,5 +75,9 @@
     "react-component",
     "select",
     "ui"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.omg.sh/",
+    "access": "restricted"
+  }
 }
