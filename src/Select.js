@@ -54,9 +54,9 @@ const Select = React.createClass({
 		autosize: React.PropTypes.bool,             // whether to enable autosizing or not
 		backspaceRemoves: React.PropTypes.bool,     // whether backspace removes an item if there is no text input
 		backspaceToRemoveMessage: React.PropTypes.string,  // Message to use for screenreaders to press backspace to remove the current item - {label} is replaced with the item label
-		clearInputOnSelect: React.PropTypes.bool,   // Clears the input component when a selection is made (multi only)
 		className: React.PropTypes.string,          // className for the outer element
 		clearAllText: stringOrNode,                 // title for the "clear" control when multi: true
+		clearInputOnSelect: React.PropTypes.bool,   // Clears the input component when a selection is made (multi only)
 		clearRenderer: React.PropTypes.func,        // create clearable x element
 		clearValueText: stringOrNode,               // title for the "clear" control
 		clearable: React.PropTypes.bool,            // should it be possible to reset value
@@ -126,9 +126,9 @@ const Select = React.createClass({
 			autosize: true,
 			backspaceRemoves: true,
 			backspaceToRemoveMessage: 'Press backspace to remove {label}',
-			clearInputOnSelect: true,
 			clearable: true,
 			clearAllText: 'Clear all',
+			clearInputOnSelect: true,
 			clearRenderer: defaultClearRenderer,
 			clearValueText: 'Clear value',
 			deleteRemoves: true,
