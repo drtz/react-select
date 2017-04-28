@@ -438,7 +438,7 @@ var Creatable = _react2['default'].createClass({
 				} else {
 					options.unshift(option);
 
-					this.select.selectValue(option);
+					this.select.selectValue(option, true);
 				}
 			}
 		}
@@ -1721,11 +1721,13 @@ var Select = _react2['default'].createClass({
 	selectValue: function selectValue(value) {
 		var _this3 = this;
 
+		var reset = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
 		//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 		this.hasScrolledToOption = false;
 		if (this.props.multi) {
 			var nextState = { focusedIndex: null };
-			if (!this.props.multi || this.props.clearInputOnSelect) {
+			if (!this.props.multi || this.props.clearInputOnSelect || reset) {
 				nextState.inputValue = '';
 			}
 			this.setState(nextState, function () {
